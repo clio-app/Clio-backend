@@ -15,12 +15,16 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
     ],
     targets: [
+        .target(name: "Domain"),
+        .target(name: "Data", dependencies: [
+            .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver")
+        ]),
         .executableTarget(
             name: "App",
             dependencies: [
                 .product(name: "Fluent", package: "fluent"),
-                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "Vapor", package: "vapor"),
+                "Data"
             ]
         ),
         .testTarget(name: "AppTests", dependencies: [
