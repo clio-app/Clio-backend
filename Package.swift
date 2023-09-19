@@ -24,7 +24,8 @@ let package = Package(
             dependencies: [
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "Vapor", package: "vapor"),
-                "Data"
+                "Data",
+                "Domain"
             ]
         ),
         .testTarget(name: "AppTests", dependencies: [

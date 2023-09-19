@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct Theme {
+public struct Theme: Codable {
     let title: String
 }

@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct Room {
+public struct Room: Codable {
     let id: UUID
     let name: String
     let theme: Theme
     let createdBy: User
     let participants: [RoomUser]
-    let gameStarted: Bool = false
-    let password: String? = nil
+    let gameStarted: Bool
+    let password: String?
 }
