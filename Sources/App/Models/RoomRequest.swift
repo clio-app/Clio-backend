@@ -11,7 +11,7 @@ import Domain
 
 struct RoomRequest: Content, Validatable {
     public let name: String
-    public let theme: String
+    public let theme: Domain.Theme
     public let createdBy: Domain.User
     public let participants: [Domain.RoomUser]
     public let gameStarted: Bool
@@ -19,6 +19,6 @@ struct RoomRequest: Content, Validatable {
 
     static func validations(_ validations: inout Validations) {
         validations.add("name", as: String.self, is: !.empty)
-        validations.add("theme", as: String.self, is: !.empty)
+        validations.add("theme", as: Theme.self, is: .valid)
     }
 }

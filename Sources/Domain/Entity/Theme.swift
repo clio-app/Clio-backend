@@ -8,5 +8,5 @@
 import Foundation
 
 public struct Theme: Codable {
-    let title: String
+    public let title: String
 }

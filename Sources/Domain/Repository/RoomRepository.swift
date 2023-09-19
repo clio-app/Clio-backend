@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol RoomRepository {
-    func createRoom(_ room: Room) async 
+    func createRoom(_ room: Room) async throws -> RoomCode
 }

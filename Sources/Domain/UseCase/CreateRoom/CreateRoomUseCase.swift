@@ -14,7 +14,7 @@ public struct CreateRoomUseCase: AnyUseCase {
         self.repository = repository
     }
     
-    public func execute(request: Room) async throws -> Void {
-        
+    public func execute(request: Room) async throws -> RoomCode {
+        return try await repository.createRoom(request)
     }
 }

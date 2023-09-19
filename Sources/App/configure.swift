@@ -1,4 +1,4 @@
-import Data
+import DataLayer
 import Vapor
 
 // configures your application
