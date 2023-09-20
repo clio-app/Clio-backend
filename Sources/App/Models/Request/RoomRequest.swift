@@ -18,7 +18,11 @@ struct RoomRequest: Content, Validatable {
     public let password: String?
 
     static func validations(_ validations: inout Validations) {
-        validations.add("name", as: String.self, is: !.empty)
-        validations.add("theme", as: Theme.self, is: .valid)
+        validations.add(
+            "name",
+            as: String.self,
+            is: !.empty,
+            customFailureDescription: "Provided name is empty!"
+        )
     }
 }
