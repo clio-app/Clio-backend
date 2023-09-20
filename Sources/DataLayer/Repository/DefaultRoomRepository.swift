@@ -36,10 +36,23 @@ public class DefaultRoomRepository: RoomRepository {
                     user: request.user
                 )
             )
+        } else {
+            throw RoomRepositoryError.cantFindRoom
         }
     }
 
     private func generateCode() -> String {
         return String(UUID().uuidString.prefix(6)).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+enum RoomRepositoryError: LocalizedError {
+    case cantFindRoom
+    
+    var errorDescription: String? {
+        switch self {
+            case .cantFindRoom:
+                return "Não foi possível encontrar uma sala com esse código"
+        }
     }
 }
