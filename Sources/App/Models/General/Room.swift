@@ -7,12 +7,13 @@
 
 import Foundation
 import FluentKit
+import Vapor
 
-final class Room: Model {
+final class Room: Model, Content {
     static var schema: String = "rooms"
-
-    @ID(key: .id)
-    var id: UUID?
+    
+    @ID(custom: "id")
+    var id: String?
     @Field(key: "name")
     var name: String
     @Field(key: "theme")
@@ -26,3 +27,4 @@ final class Room: Model {
     @OptionalField(key: "password")
     var password: String?
 }
+

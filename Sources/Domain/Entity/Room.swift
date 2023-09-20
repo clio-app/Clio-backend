@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Room: Codable {
-    public let id: UUID?
+    public var id: String?
     public let name: String
     public let theme: Theme
     public let createdBy: User
@@ -16,7 +16,7 @@ public struct Room: Codable {
     public let gameStarted: Bool
     public let password: String?
     
-    public init(id: UUID? = nil, name: String, theme: Theme, createdBy: User, participants: [RoomUser], gameStarted: Bool, password: String?) {
+    public init(id: String? = nil, name: String, theme: Theme, createdBy: User, participants: [RoomUser], gameStarted: Bool, password: String?) {
         self.id = id
         self.name = name
         self.theme = theme

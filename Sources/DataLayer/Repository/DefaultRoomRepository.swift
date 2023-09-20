@@ -9,18 +9,20 @@ import Foundation
 import Domain
 
 public class DefaultRoomRepository: RoomRepository {
-    private var sessions: Set<String> = Set()
+    private var sessions: [Domain.Room] = []
     
     public init() {}
     
     public func createRoom(_ room: Domain.Room) async throws -> Domain.RoomCode {
+        var inputedRoom = room
         var sessionCode = generateCode()
-        var inserted = sessions.insert(sessionCode).inserted
         
-        while !inserted {
+        while sessions.contains(where: { $0.id == sessionCode }) {
             sessionCode = generateCode()
-            inserted = sessions.insert(sessionCode).inserted
         }
+        
+        inputedRoom.id = sessionCode
+        sessions.append(inputedRoom)
         
         return Domain.RoomCode(code: sessionCode)
     }

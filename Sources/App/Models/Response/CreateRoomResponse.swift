@@ -7,8 +7,9 @@
 
 import Foundation
 import FluentKit
+import Vapor
 
-public final class RoomCode: Model {
+public final class CreateRoomResponse: Model, Content {
     public static var schema: String = "roomCodes"
 
     @ID(custom: "id")

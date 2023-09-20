@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Domain
 
-struct RoomRequest: Content, Validatable {
+struct CreateRoomRequest: Content, Validatable {
     public let name: String
     public let theme: Domain.Theme
     public let createdBy: Domain.User
