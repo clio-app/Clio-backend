@@ -8,7 +8,7 @@
 import Foundation
 
 public struct RoomCode: Codable {
-    public let code: UUID
+    public let code: String
     
-    public init(code: UUID) { self.code = code }
+    public init(code: String) { self.code = code }
 }

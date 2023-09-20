@@ -11,12 +11,9 @@ import FluentKit
 public final class RoomCode: Model {
     public static var schema: String = "roomCodes"
 
-    @ID(key: .id)
-    public var id: UUID?
-    
-    public init(id: UUID? = nil) {
-        self.id = id
-    }
-    
+    @ID(custom: "id")
+    public var id: String?
+
+    public init(id: String? = nil) { self.id = id }
     public init() {}
 }

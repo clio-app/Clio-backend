@@ -8,10 +8,19 @@
 import Foundation
 import Domain
 
-public class DefaultRoomRepository: RoomRepository {    
+public class DefaultRoomRepository: RoomRepository {
+    private var sessions: Set<String> = Set()
+    
     public init() {}
     
     public func createRoom(_ room: Domain.Room) async throws -> Domain.RoomCode {
-        return Domain.RoomCode(code: UUID())
+        var sessionCode = generateCode()
+        while sessions.contains(sessionCode) { sessionCode = generateCode() }
+        sessions.insert(sessionCode)
+        return Domain.RoomCode(code: sessionCode)
+    }
+    
+    private func generateCode() -> String {
+        return String(UUID().uuidString.prefix(6)).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
