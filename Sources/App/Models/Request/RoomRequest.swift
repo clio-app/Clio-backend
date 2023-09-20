@@ -24,5 +24,13 @@ struct RoomRequest: Content, Validatable {
             is: !.empty,
             customFailureDescription: "Provided name is empty!"
         )
+        
+        validations.add("theme", customFailureDescription: "Provided theme is empty!") { themeValidator in
+            themeValidator.add(
+                "title",
+                as: String.self,
+                is: !.empty
+            )
+        }
     }
 }

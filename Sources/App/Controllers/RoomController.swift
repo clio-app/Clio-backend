@@ -22,15 +22,11 @@ class RoomController: RouteCollection {
         group.post("create", use: create)
     }
     
-    func create(_ request: Request) async throws -> BaseResponse<DataLayer.RoomCode> {
+    func create(_ request: Request) async throws -> DataLayer.RoomCode {
         try RoomRequest.validate(content: request)
         let requestData = try request.content.decode(Room.self)
         let responseData = try await createRoomUseCase.execute(request: requestData)
         
-        return BaseResponse(
-            status: 200,
-            message: "Success",
-            data: DataLayer.RoomCode(id: responseData.code)
-        )
+        return DataLayer.RoomCode(id: responseData.code)
     }
 }
