@@ -33,7 +33,7 @@ class RoomController: RouteCollection {
     
     func register(_ request: Request) async throws -> BaseResponse<Empty> {
         try RegisterRoomRequestValidator.validate(content: request)
-        let requestData = try request.content.decode(RegisterUserInRoomRequest.self)
+        let requestData = try request.content.decode(Domain.RegisterUser.self)
         return BaseResponse(status: 200, message: "", data: nil)
     }
 }

@@ -13,7 +13,7 @@ public struct Room: Codable {
     public let theme: Theme
     public let createdBy: User
     public let master: RoomUser?
-    public let participants: [RoomUser]
+    public var participants: [RoomUser]
     public let gameStarted: Bool
     public let password: String?
     

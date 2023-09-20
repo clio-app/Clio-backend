@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CreateRoomUseCase: AnyUseCase {
+public class CreateRoomUseCase: AnyUseCase {
     private let repository: RoomRepository
     
     public init(repository: RoomRepository) {
