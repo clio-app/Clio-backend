@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct RoomUser {
-    let rankingPosition: Int
-    let points: Int
-    let user: User
+public struct RoomUser: Codable {
+    public let rankingPosition: Int
+    public let points: Int
+    public let user: User
 }

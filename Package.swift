@@ -16,15 +16,17 @@ let package = Package(
     ],
     targets: [
         .target(name: "Domain"),
-        .target(name: "Data", dependencies: [
-            .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver")
+        .target(name: "DataLayer", dependencies: [
+            .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
+            "Domain"
         ]),
         .executableTarget(
             name: "App",
             dependencies: [
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "Vapor", package: "vapor"),
-                "Data"
+                "DataLayer",
+                "Domain"
             ]
         ),
         .testTarget(name: "AppTests", dependencies: [

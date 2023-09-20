@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct User {
-    let id: UUID
-    let name: String
+public struct User: Codable {
+    public let id: UUID
+    public let name: String
 }
