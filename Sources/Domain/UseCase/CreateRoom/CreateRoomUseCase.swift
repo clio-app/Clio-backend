@@ -14,7 +14,7 @@ public class CreateRoomUseCase: AnyUseCase {
         self.repository = repository
     }
     
-    public func execute(request: Room) async throws -> RoomCode {
+    public func execute(request: CreateRoomRequest) async throws -> RoomCode {
         return try await repository.createRoom(request)
     }
 }

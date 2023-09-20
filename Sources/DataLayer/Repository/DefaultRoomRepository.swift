@@ -13,29 +13,44 @@ public class DefaultRoomRepository: RoomRepository {
     
     public init() {}
     
-    public func createRoom(_ room: Room) async throws -> RoomCode {
-        var inputedRoom = room
+    public func createRoom(_ room: CreateRoomRequest) async throws -> RoomCode {
         var sessionCode = generateCode()
         
         while sessions.contains(where: { $0.id == sessionCode }) {
             sessionCode = generateCode()
         }
         
-        inputedRoom.id = sessionCode
-        sessions.append(inputedRoom)
+        sessions.append(
+            Room(
+                id: sessionCode,
+                name: room.name,
+                theme: room.theme,
+                participants: [],
+                gameStarted: false
+            )
+        )
         
         return RoomCode(code: sessionCode)
     }
     
-    public func registerUserInRoom(_ request: RegisterUser) async throws {
+    public func registerUserInRoom(_ request: RegisterUserRequest) async throws {
         if let sessionIndex = sessions.firstIndex(where: { $0.id == request.roomCode }) {
-            sessions[sessionIndex].participants.append(
-                RoomUser(
-                    rankingPosition: sessions[sessionIndex].participants.count + 1,
+            if sessions[sessionIndex].createdBy == nil {
+                sessions[sessionIndex].createdBy = request.user
+                sessions[sessionIndex].master = RoomUser(
+                    rankingPosition: 0,
                     points: 0,
                     user: request.user
                 )
-            )
+            } else {
+                sessions[sessionIndex].participants.append(
+                    RoomUser(
+                        rankingPosition: sessions[sessionIndex].participants.count + 1,
+                        points: 0,
+                        user: request.user
+                    )
+                )
+            }
         } else {
             throw RoomRepositoryError.cantFindRoom
         }

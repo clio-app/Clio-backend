@@ -14,7 +14,7 @@ public class RegisterUserInRoomUseCase: AnyUseCase {
         self.repository = repository
     }
     
-    public func execute(request: RegisterUser) async throws -> Void {
+    public func execute(request: RegisterUserRequest) async throws -> Void {
         try await repository.registerUserInRoom(request)
     }
 }

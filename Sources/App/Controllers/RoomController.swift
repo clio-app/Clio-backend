@@ -30,7 +30,7 @@ class RoomController: RouteCollection {
     
     func create(_ request: Request) async throws -> CreateRoomResponse {
         try CreateRoomRequestValidator.validate(content: request)
-        let requestData = try request.content.decode(Domain.Room.self)
+        let requestData = try request.content.decode(CreateRoomRequest.self)
         let responseData = try await createRoomUseCase.execute(request: requestData)
         
         return CreateRoomResponse(id: responseData.code)
@@ -38,7 +38,7 @@ class RoomController: RouteCollection {
     
     func register(_ request: Request) async throws -> RegisterUserInRoomResponse {
         try RegisterRoomRequestValidator.validate(content: request)
-        let requestData = try request.content.decode(Domain.RegisterUser.self)
+        let requestData = try request.content.decode(RegisterUserRequest.self)
         
         do {
             try await registerUserInRoomUseCase.execute(request: requestData)
