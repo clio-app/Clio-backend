@@ -13,19 +13,28 @@ import DataLayer
 class RoomController: RouteCollection {
     private var createRoomUseCase: CreateRoomUseCase
     private var registerUserInRoomUseCase: RegisterUserInRoomUseCase
+    private var getAllRoomsUseCase: GetAllRoomsUseCase
     
     public init(
         createRoomUseCase: CreateRoomUseCase,
-        registerUserInRoomUseCase: RegisterUserInRoomUseCase
+        registerUserInRoomUseCase: RegisterUserInRoomUseCase,
+        getAllRoomsUseCase: GetAllRoomsUseCase
     ) {
         self.createRoomUseCase = createRoomUseCase
         self.registerUserInRoomUseCase = registerUserInRoomUseCase
+        self.getAllRoomsUseCase = getAllRoomsUseCase
     }
     
     func boot(routes: RoutesBuilder) throws {
         let group = routes.grouped("room")
+        group.get(use: index)
         group.post("create", use: create)
         group.post("register", use: register)
+    }
+    
+    func index(_ request: Request) async throws -> [App.Room] {
+        let rooms: [Domain.Room] = try await getAllRoomsUseCase.execute(request: request)
+        return rooms.compactMap( { Room(from: $0) } )
     }
     
     func create(_ request: Request) async throws -> CreateRoomResponse {

@@ -56,6 +56,10 @@ public class DefaultRoomRepository: RoomRepository {
         }
     }
 
+    public func getAllRooms() async throws -> [Room] {
+        return sessions
+    }
+
     private func generateCode() -> String {
         return String(UUID().uuidString.prefix(6)).trimmingCharacters(in: .whitespacesAndNewlines)
     }

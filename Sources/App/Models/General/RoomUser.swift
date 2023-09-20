@@ -7,6 +7,7 @@
 
 import Foundation
 import FluentKit
+import Domain
 
 final class RoomUser: Fields {
     @Field(key: "rankingPosition")
@@ -15,4 +16,12 @@ final class RoomUser: Fields {
     var points: Int
     @Field(key: "user")
     var user: User
+
+    convenience init(from domain: Domain.RoomUser) {
+        self.init()
+        
+        self.rankingPosition = domain.rankingPosition
+        self.points = domain.points
+        self.user = User(from: domain.user)
+    }
 }

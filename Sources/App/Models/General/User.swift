@@ -7,6 +7,7 @@
 
 import Foundation
 import FluentKit
+import Domain
 
 final class User: Model {
     static var schema: String = "users"
@@ -15,4 +16,10 @@ final class User: Model {
     var id: UUID?
     @Field(key: "name")
     var name: String
+    
+    convenience init(from domain: Domain.User) {
+        self.init()
+        self.id = domain.id
+        self.name = domain.name
+    }
 }
