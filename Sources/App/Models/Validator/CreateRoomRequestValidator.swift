@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Domain
 
-struct CreateRoomRequest: Content, Validatable {
+struct CreateRoomRequestValidator: Content, Validatable {
     public let name: String
     public let theme: Domain.Theme
     public let createdBy: Domain.User
@@ -22,10 +22,10 @@ struct CreateRoomRequest: Content, Validatable {
             "name",
             as: String.self,
             is: !.empty,
-            customFailureDescription: "Provided name is empty!"
+            customFailureDescription: "O campo nome está vazio!"
         )
         
-        validations.add("theme", customFailureDescription: "Provided theme is empty!") { themeValidator in
+        validations.add("theme", customFailureDescription: "O campo tema está vazio") { themeValidator in
             themeValidator.add(
                 "title",
                 as: String.self,
