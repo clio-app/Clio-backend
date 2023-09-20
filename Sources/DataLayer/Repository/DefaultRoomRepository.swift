@@ -15,8 +15,13 @@ public class DefaultRoomRepository: RoomRepository {
     
     public func createRoom(_ room: Domain.Room) async throws -> Domain.RoomCode {
         var sessionCode = generateCode()
-        while sessions.contains(sessionCode) { sessionCode = generateCode() }
-        sessions.insert(sessionCode)
+        var inserted = sessions.insert(sessionCode).inserted
+        
+        while !inserted {
+            sessionCode = generateCode()
+            inserted = sessions.insert(sessionCode).inserted
+        }
+        
         return Domain.RoomCode(code: sessionCode)
     }
     
