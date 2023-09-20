@@ -11,4 +11,10 @@ public struct RoomUser: Codable {
     public let rankingPosition: Int
     public let points: Int
     public let user: User
+    
+    public init(rankingPosition: Int, points: Int, user: User) {
+        self.rankingPosition = rankingPosition
+        self.points = points
+        self.user = user
+    }
 }
