@@ -9,7 +9,8 @@ func routes(_ app: Application) throws {
     try app.register(collection: RoomController(
             createRoomUseCase: CreateRoomUseCase(repository: roomRepository),
             registerUserInRoomUseCase: RegisterUserInRoomUseCase(repository: roomRepository),
-            getAllRoomsUseCase: GetAllRoomsUseCase(repository: roomRepository)
+            getAllRoomsUseCase: GetAllRoomsUseCase(repository: roomRepository),
+            findRoomUseCase: FindRoomUseCase(repository: roomRepository)
         )
     )
 }

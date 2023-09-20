@@ -59,6 +59,11 @@ public class DefaultRoomRepository: RoomRepository {
     public func getAllRooms() async throws -> [Room] {
         return sessions
     }
+    
+    public func findRoomById(_ id: String) async throws -> Domain.Room {
+        if let room = sessions.first(where: { $0.id == id } ) { return room }
+        throw RoomRepositoryError.cantFindRoom
+    }
 
     private func generateCode() -> String {
         return String(UUID().uuidString.prefix(6)).trimmingCharacters(in: .whitespacesAndNewlines)

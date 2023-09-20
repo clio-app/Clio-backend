@@ -7,14 +7,14 @@
 
 import Foundation
 
-public final  class GetAllRoomsUseCase: AnyUseCase {
+public final class FindRoomUseCase: AnyUseCase {
     private let repository: RoomRepository
     
     public init(repository: RoomRepository) {
         self.repository = repository
     }
-
-    public func execute(request: Any) async throws -> [Room] {
-        return try await repository.getAllRooms()
+    
+    public func execute(request: String) async throws -> Room {
+        return try await repository.findRoomById(request)
     }
 }
