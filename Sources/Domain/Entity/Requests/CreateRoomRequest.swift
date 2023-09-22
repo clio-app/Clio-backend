@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Domain
 
 public struct CreateRoomRequest: Codable {
     public let name: String
