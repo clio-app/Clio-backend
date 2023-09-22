@@ -9,5 +9,5 @@ import Foundation
 
 public struct CreateUserRequest: Codable {
     let name: String
-    let image: String
+    let picture: String
 }

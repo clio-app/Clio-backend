@@ -13,6 +13,6 @@ public final class CreateUserUseCase: AnyUseCase {
     public init(repository: UserRepository) { self.repository = repository }
     
     public func execute(request: CreateUserRequest) async throws -> User {
-        return try await repository.createUser(name: request.name, picture: request.image)
+        return try await repository.createUser(name: request.name, picture: request.picture)
     }
 }
