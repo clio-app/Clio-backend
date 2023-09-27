@@ -6,15 +6,12 @@
 //
 
 import Foundation
-import FluentKit
 import Vapor
-
-public final class CreateRoomResponse: Model, Content {
-    public static var schema: String = "roomCodes"
-
-    @ID(custom: "id")
-    public var id: String?
-
-    public init(id: String? = nil) { self.id = id }
-    public init() {}
+    
+final class CreateRoomResponse: Content {
+    let id: String?
+    
+    init(id: String?) {
+        self.id = id
+    }
 }

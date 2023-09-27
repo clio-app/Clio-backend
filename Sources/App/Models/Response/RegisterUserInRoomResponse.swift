@@ -12,7 +12,7 @@ enum MessageType: String, Codable {
     case success = "Usuário registrado com sucesso"
 }
 
-public final class RegisterUserInRoomResponse: Content {
+final class RegisterUserInRoomResponse: Content {
     let message: MessageType
     
     init(message: MessageType) {

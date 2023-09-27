@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  title: Clio API
+  version: '1.0'
+
+servers:
+  - description: Local Server
+    url: http://localhost:8080
+
+paths:
+
+  /room:
+    get:
+      tags:
+          - Room
+      summary: Get all rooms
+      responses:
+        '200':
+          description: A list of rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+                  
+  /room/create:
+    post:
+      tags:
+        - Room
+      summary: Create a new Room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                theme:
+                  type: '#/components/schemas/Theme'
+      responses:
+        '200':
+          description: The created room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+                  
+  /room/{id}:
+    get:
+      tags:
+          - Room
+      summary: Get a room specified by the requested ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the user to get
+      responses:
+        '200':
+          description: A room object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          
+  /user/create:
+    post:
+      tags:
+          - User
+      summary: create a new user
+      parameters:
+        - in: path
+          name: string
+          picture: string
+          required: true
+      responses:
+        '200':
+          description: A user id
+          content:
+            application/json:
+              schema:
+                type: string
+                items:
+                  $ref: '#/components/schemas/User'
+          
+components:
+  schemas:
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The room ID.
+        name:
+          type: string
+          description: The room name.
+        theme:
+          $ref: '#/components/schemas/Theme'
+        createdBy:
+          $ref: '#/components/schemas/User'
+        master:
+          $ref: '#/components/schemas/RoomUser'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoomUser'
+        gameStarted:
+          type: boolean
+          description: Indicates if the game has started.
+        password:
+          type: string
+          description: The room password (if set).
+      required:
+        - name
+        - theme
+        - participants
+        - gameStarted
+        
+    RoomCode:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The room code.
+      required:
+        - code
+
+    RoomUser:
+      type: object
+      properties:
+        rankingPosition:
+          type: integer
+          description: The ranking position of the user in the room.
+        points:
+          type: integer
+          description: The points scored by the user in the room.
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - rankingPosition
+        - points
+        - user
+  
+    Theme:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the theme.
+      required:
+        - title
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The user ID.
+        name:
+          type: string
+          description: The user name.
+        picture:
+          type: string
+          description: The user picture media path.
+      required:
+        - id
+        - name
