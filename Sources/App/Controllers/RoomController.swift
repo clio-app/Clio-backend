@@ -8,7 +8,6 @@
 import Foundation
 import Vapor
 import Domain
-import DataLayer
 
 class RoomController: RouteCollection {
     private var createRoomUseCase: CreateRoomUseCase
@@ -33,7 +32,6 @@ class RoomController: RouteCollection {
         group.group(":id") { $0.get(use: find) }
         group.get(use: index)
         group.post("create", use: create)
-        group.post("register", use: register)
     }
     
     func index(_ request: Request) async throws -> [App.Room] {
@@ -57,18 +55,5 @@ class RoomController: RouteCollection {
         let responseData = try await createRoomUseCase.execute(request: requestData)
         
         return CreateRoomResponse(id: responseData.code)
-    }
-    
-    func register(_ request: Request) async throws -> RegisterUserInRoomResponse {
-        try RegisterRoomRequestValidator.validate(content: request)
-        let requestData = try request.content.decode(RegisterUserRequest.self)
-        
-        do {
-            try await registerUserInRoomUseCase.execute(request: requestData)
-        } catch {
-            throw Abort(.custom(code: 400, reasonPhrase: error.localizedDescription))
-        }
-        
-        return RegisterUserInRoomResponse(message: .success)
     }
 }

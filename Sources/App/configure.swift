@@ -1,5 +1,5 @@
-import DataLayer
 import Vapor
+import DataLayer
 
 // configures your application
 public func configure(_ app: Application) async throws {
