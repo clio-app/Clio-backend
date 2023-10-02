@@ -33,7 +33,9 @@ public class DefaultRoomRepository: RoomRepository {
         return RoomCode(code: sessionCode)
     }
     
-    public func registerUserInRoom(_ request: RegisterUserRequest) async throws {
+    public func registerUserInRoom(
+        _ request: RegisterUserRequest
+    ) async throws -> UpdatePlayersRoomDTO {
         if let sessionIndex = sessions.firstIndex(where: { $0.id == request.roomCode }) {
             if sessions[sessionIndex].createdBy == nil {
                 sessions[sessionIndex].createdBy = request.user
@@ -51,6 +53,11 @@ public class DefaultRoomRepository: RoomRepository {
                     )
                 )
             }
+            
+            return UpdatePlayersRoomDTO(
+                master: sessions[sessionIndex].master!,
+                users: sessions[sessionIndex].participants
+            )
         } else {
             throw RoomRepositoryError.cantFindRoom
         }

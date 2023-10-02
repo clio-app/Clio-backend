@@ -22,6 +22,10 @@ func routes(_ app: Application) throws {
         )
     )
     
-    try app.register(collection: GameSystemController())
+    try app.register(
+        collection: GameSystemController(
+            registerUserInRoomUseCase: RegisterUserInRoomUseCase(repository: roomRepository)
+        )
+    )
 }
 

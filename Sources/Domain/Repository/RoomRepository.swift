@@ -9,7 +9,7 @@ import Foundation
 
 public protocol RoomRepository {
     func createRoom(_ room: CreateRoomRequest) async throws -> RoomCode
-    func registerUserInRoom(_ request: RegisterUserRequest) async throws
+    func registerUserInRoom(_ request: RegisterUserRequest) async throws -> UpdatePlayersRoomDTO
     func getAllRooms() async throws -> [Room]
     func findRoomById(_ id: String) async throws -> Room
 }
