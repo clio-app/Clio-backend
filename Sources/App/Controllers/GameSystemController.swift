@@ -42,11 +42,31 @@ class GameSystemController: RouteCollection {
                                  state: clientMessages
                              )
                         } catch {
-                            print(error.localizedDescription)
+                            let message = TransferMessage(
+                                state: .server(.error),
+                                data: SocketError.cantHandleClientMessage(
+                                    error.localizedDescription
+                                ).errorDescription?.data(using: .utf8) ?? Data()
+                            )
+                            
+                            try? await socket.send(
+                                raw: message.encodeToTransfer(),
+                                opcode: .binary
+                            )
                         }
                     case .server(_):
                         break
                 }
+            } else {
+                let message = TransferMessage(
+                    state: .server(.error),
+                    data: SocketError.unableToDecodeMessage.errorDescription?.data(using: .utf8) ?? Data()
+                )
+                
+                try? await socket.send(
+                    raw: message.encodeToTransfer(),
+                    opcode: .binary
+                )
             }
         }
     }
@@ -54,10 +74,7 @@ class GameSystemController: RouteCollection {
     func sendMessageToAllConnections(_ message: TransferMessage) {
         let messageData = message.encodeToTransfer()
         for connection in connections {
-            connection.socket.send(
-                raw: messageData,
-                opcode: .binary
-            )
+            connection.socket.send(raw: messageData, opcode: .binary)
         }
     }
     

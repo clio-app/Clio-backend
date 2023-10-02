@@ -28,6 +28,7 @@ public enum MessageState: Codable {
     public enum ServerMessages: Codable {
         case connection(ServerConnection)
         case gameFlow(ServerGameFlow)
+        case error
         
         public enum ServerConnection: String, Codable {
             case playerConnected = "#playerConnected"
