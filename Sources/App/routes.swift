@@ -6,6 +6,7 @@ import Vapor
 func routes(_ app: Application) throws {
     let userRepository = DefaultUserRepository()
     let roomRepository = DefaultRoomRepository()
+    let gameSession = DefaultGameSession()
     
     try app.register(
         collection: RoomController(
@@ -24,7 +25,11 @@ func routes(_ app: Application) throws {
     
     try app.register(
         collection: GameSystemController(
-            registerUserInRoomUseCase: RegisterUserInRoomUseCase(repository: roomRepository)
+            registerUserInRoomUseCase: RegisterUserInRoomUseCase(repository: roomRepository),
+            gameStartUseCase: GameStartUseCase(
+                session: gameSession,
+                roomRepository: roomRepository
+            )
         )
     )
 }

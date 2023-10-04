@@ -12,9 +12,14 @@ import Domain
 class GameSystemController: RouteCollection {
     private(set) var connections: [SocketConnection] = [SocketConnection]()
     let registerUserInRoomUseCase: RegisterUserInRoomUseCase
+    let gameStartUseCase: GameStartUseCase
     
-    init(registerUserInRoomUseCase: RegisterUserInRoomUseCase) {
+    init(
+        registerUserInRoomUseCase: RegisterUserInRoomUseCase,
+        gameStartUseCase: GameStartUseCase
+    ) {
         self.registerUserInRoomUseCase = registerUserInRoomUseCase
+        self.gameStartUseCase = gameStartUseCase
     }
     
     func boot(routes: RoutesBuilder) throws {
@@ -118,7 +123,18 @@ class GameSystemController: RouteCollection {
                     )
                 )
             case .gameStarted:
-                break
+                let dto = BooleanMessageDTO.decodeFromMessage(message.data)
+                if !dto.value { return }
+            
+                let response: MasterActingDTO = try await gameStartUseCase.execute(
+                    request: roomId
+                )
+                sendMessageToAllConnections(
+                    TransferMessage(
+                        state: .server(.gameFlow(.masterActing)),
+                        data: response.encodeToTransfer()
+                    )
+                )
             case .masterActed:
                 break
             case .userActed:
