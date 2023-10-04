@@ -16,13 +16,13 @@ public enum MessageState: Codable {
         
         public enum ClientGameFlow: String, Codable {
             case registerUser = "#registerUser"
-            case masterActing = "#masterActing"
-            case masterSharing = "#masterSharing"
-            case userDidAct = "#userDidAct"
-            case startVoting = "#startVoting"
-            case userDidVote = "#userDidVote"
-            case roundEnd = "#roundEnd"
+            case gameStarted = "#gameStarted"
+            case masterActed = "#masterActed"
+            case userActed = "#userActed"
+            case userVoted = "#userVoted"
+            case playAgain = "#playAgain"
         }
+
     }
     
     public enum ServerMessages: Codable {
@@ -35,11 +35,12 @@ public enum MessageState: Codable {
         }
         
         public enum ServerGameFlow: String, Codable {
-            case gameStarted = "#gameStarted"
-            case masterActed = "#masterActed"
-            case userActed = "#userActed"
-            case userVoted = "#userVoted"
-            case playAgain = "#playAgain"
+            case masterActing = "#masterActing"
+            case masterSharing = "#masterSharing"
+            case userDidAct = "#userDidAct"
+            case startVoting = "#startVoting"
+            case userDidVote = "#userDidVote"
+            case roundEnd = "#roundEnd"
         }
     }
 }

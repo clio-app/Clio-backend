@@ -117,17 +117,15 @@ class GameSystemController: RouteCollection {
                         data: response.encodeToTransfer()
                     )
                 )
-            case .masterActing:
+            case .gameStarted:
                 break
-            case .masterSharing:
+            case .masterActed:
                 break
-            case .userDidAct:
+            case .userActed:
                 break
-            case .startVoting:
+            case .userVoted:
                 break
-            case .userDidVote:
-                break
-            case .roundEnd:
+            case .playAgain:
                 break
         }
     }
