@@ -51,7 +51,8 @@ class GameSystemController: RouteCollection {
                                 state: .server(.error),
                                 data: SocketError.cantHandleClientMessage(
                                     error.localizedDescription
-                                ).errorDescription?.data(using: .utf8) ?? Data()
+                                )
+                                .errorDescription?.data(using: .utf8) ?? Data()
                             )
                             
                             try? await socket.send(
