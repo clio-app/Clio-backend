@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import Domain
+import ClioEntities
 
 class RoomController: RouteCollection {
     private var createRoomUseCase: CreateRoomUseCase
@@ -35,14 +36,14 @@ class RoomController: RouteCollection {
     }
     
     func index(_ request: Request) async throws -> [App.Room] {
-        let rooms: [Domain.Room] = try await getAllRoomsUseCase.execute(request: request)
+        let rooms: [ClioEntities.Room] = try await getAllRoomsUseCase.execute(request: request)
         return rooms.compactMap( { Room(from: $0) } )
     }
     
     func find(_ request: Request) async throws -> App.Room {
         guard let roomId = request.parameters.get("id") else { throw Abort(.badRequest) }
         do {
-            let responseData: Domain.Room = try await findRoomUseCase.execute(request: roomId)
+            let responseData: ClioEntities.Room = try await findRoomUseCase.execute(request: roomId)
             return App.Room(from: responseData)
         } catch {
             throw Abort(.custom(code: 400, reasonPhrase: error.localizedDescription))

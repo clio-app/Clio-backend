@@ -7,7 +7,7 @@
 
 import Foundation
 import FluentKit
-import Domain
+import ClioEntities
 
 final class RoomUser: Fields {
     @Field(key: "rankingPosition")
@@ -17,11 +17,11 @@ final class RoomUser: Fields {
     @Field(key: "user")
     var user: User
 
-    convenience init(from domain: Domain.RoomUser) {
+    convenience init(from entity: ClioEntities.RoomUser) {
         self.init()
         
-        self.rankingPosition = domain.rankingPosition
-        self.points = domain.points
-        self.user = User(from: domain.user)
+        self.rankingPosition = entity.rankingPosition
+        self.points = entity.points
+        self.user = User(from: entity.user)
     }
 }

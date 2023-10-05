@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import Domain
+import ClioEntities
 
 class GameSystemController: RouteCollection {
     private(set) var connections: [SocketConnection] = [SocketConnection]()

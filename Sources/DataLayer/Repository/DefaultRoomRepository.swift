@@ -7,6 +7,7 @@
 
 import Foundation
 import Domain
+import ClioEntities
 
 public class DefaultRoomRepository: RoomRepository {
     private var sessions: [Room] = []
@@ -67,7 +68,7 @@ public class DefaultRoomRepository: RoomRepository {
         return sessions
     }
     
-    public func findRoomById(_ id: String) async throws -> Domain.Room {
+    public func findRoomById(_ id: String) async throws -> Room {
         if let room = sessions.first(where: { $0.id == id } ) { return room }
         throw RoomRepositoryError.cantFindRoom
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public protocol RoomRepository {
     func createRoom(_ room: CreateRoomRequest) async throws -> RoomCode

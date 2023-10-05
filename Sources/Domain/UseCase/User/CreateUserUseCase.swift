@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public final class CreateUserUseCase: AnyUseCase {
     private let repository: UserRepository

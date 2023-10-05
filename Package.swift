@@ -13,11 +13,16 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
         // 🪶 Fluent driver for SQLite.
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
+        // Entities
+        .package(url: "https://github.com/clio-app/clio-entities", branch: "main"),
     ],
     targets: [
-        .target(name: "Domain"),
+        .target(name: "Domain", dependencies: [
+            .product(name: "ClioEntities", package: "clio-entities")
+        ]),
         .target(name: "DataLayer", dependencies: [
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
+            .product(name: "ClioEntities", package: "clio-entities"),
             "Domain"
         ]),
         .executableTarget(
@@ -25,6 +30,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "Vapor", package: "vapor"),
+                .product(name: "ClioEntities", package: "clio-entities"),
                 "DataLayer",
                 "Domain"
             ]

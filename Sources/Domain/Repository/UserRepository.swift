@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public protocol UserRepository {
     func createUser(name: String, picture: String) async throws -> User

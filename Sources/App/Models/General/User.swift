@@ -7,8 +7,8 @@
 
 import Foundation
 import FluentKit
-import Domain
 import Vapor
+import ClioEntities
 
 final class User: Model, Content {
     static var schema: String = "users"
@@ -20,10 +20,10 @@ final class User: Model, Content {
     @Field(key: "picture")
     var picture: String
     
-    convenience init(from domain: Domain.User) {
+    convenience init(from entity: ClioEntities.User) {
         self.init()
-        self.id = domain.id
-        self.name = domain.name
-        self.picture = domain.picture
+        self.id = entity.id
+        self.name = entity.name
+        self.picture = entity.picture
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import Domain
+import ClioEntities
 
 public class DefaultGameSession: GameSession {
     public var started: Bool = false 

@@ -8,12 +8,13 @@
 import Foundation
 import Vapor
 import Domain
+import ClioEntities
 
 struct CreateRoomRequestValidator: Content, Validatable {
     public let name: String
-    public let theme: Domain.Theme
-    public let createdBy: Domain.User
-    public let participants: [Domain.RoomUser]
+    public let theme: Theme
+    public let createdBy: User
+    public let participants: [RoomUser]
     public let gameStarted: Bool
     public let password: String?
 

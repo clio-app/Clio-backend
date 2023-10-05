@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import Domain
+import ClioEntities
 
 final class UserController: RouteCollection {
     let createUserUseCase: CreateUserUseCase

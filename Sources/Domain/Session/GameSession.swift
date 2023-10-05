@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public protocol GameSession {
     var started: Bool { get }

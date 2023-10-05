@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public final class FindRoomUseCase: AnyUseCase {
     private let repository: RoomRepository

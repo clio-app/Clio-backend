@@ -7,15 +7,15 @@
 
 import Foundation
 import FluentKit
-import Domain
+import ClioEntities
 
 final class Theme: Fields {
     @Field(key: "title")
     var title: String
     
-    convenience init(from domain: Domain.Theme) {
+    convenience init(from entity: ClioEntities.Theme) {
         self.init()
         
-        self.title = domain.title
+        self.title = entity.title
     }
 }

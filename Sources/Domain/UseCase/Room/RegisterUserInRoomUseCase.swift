@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public class RegisterUserInRoomUseCase: AnyUseCase {
     private let repository: RoomRepository

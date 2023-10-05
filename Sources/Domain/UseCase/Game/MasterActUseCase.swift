@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ClioEntities
 
 public final class MasterActUseCase: AnyUseCase {
     let session: GameSession

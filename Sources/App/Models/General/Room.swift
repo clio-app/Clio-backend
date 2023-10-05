@@ -7,8 +7,8 @@
 
 import Foundation
 import FluentKit
-import Domain
 import Vapor
+import ClioEntities
 
 final class Room: Model, Content {
     static var schema: String = "rooms"
@@ -30,17 +30,17 @@ final class Room: Model, Content {
     @OptionalField(key: "password")
     var password: String?
     
-    convenience init(from domain: Domain.Room) {
+    convenience init(from entity: ClioEntities.Room) {
         self.init()
         
-        self.id = domain.id
-        self.name = domain.name
-        self.theme = Theme(from: domain.theme)
-        self.createdBy = domain.createdBy != nil ? User(from: domain.createdBy!) : nil
-        self.master = domain.master != nil ? RoomUser(from: domain.master!) : nil
-        self.participants = domain.participants.compactMap( { RoomUser(from: $0)} )
-        self.gameStarted = domain.gameStarted
-        self.password = domain.password
+        self.id = entity.id
+        self.name = entity.name
+        self.theme = Theme(from: entity.theme)
+        self.createdBy = entity.createdBy != nil ? User(from: entity.createdBy!) : nil
+        self.master = entity.master != nil ? App.RoomUser(from: entity.master!) : nil
+        self.participants = entity.participants.compactMap( { App.RoomUser(from: $0)} )
+        self.gameStarted = entity.gameStarted
+        self.password = entity.password
     }
 }
 
