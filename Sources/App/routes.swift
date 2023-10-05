@@ -29,7 +29,8 @@ func routes(_ app: Application) throws {
             gameStartUseCase: GameStartUseCase(
                 session: gameSession,
                 roomRepository: roomRepository
-            )
+            ),
+            masterActUseCase: MasterActUseCase(session: gameSession)
         )
     )
 }

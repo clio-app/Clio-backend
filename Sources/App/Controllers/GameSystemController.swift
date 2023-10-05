@@ -13,13 +13,16 @@ class GameSystemController: RouteCollection {
     private(set) var connections: [SocketConnection] = [SocketConnection]()
     let registerUserInRoomUseCase: RegisterUserInRoomUseCase
     let gameStartUseCase: GameStartUseCase
+    let masterActUseCase: MasterActUseCase
     
     init(
         registerUserInRoomUseCase: RegisterUserInRoomUseCase,
-        gameStartUseCase: GameStartUseCase
+        gameStartUseCase: GameStartUseCase,
+        masterActUseCase: MasterActUseCase
     ) {
         self.registerUserInRoomUseCase = registerUserInRoomUseCase
         self.gameStartUseCase = gameStartUseCase
+        self.masterActUseCase = masterActUseCase
     }
     
     func boot(routes: RoutesBuilder) throws {
@@ -137,7 +140,14 @@ class GameSystemController: RouteCollection {
                     )
                 )
             case .masterActed:
-                break
+                let dto = MasterActedDTO.decodeFromMessage(message.data)
+                let response: MasterSharingDTO = masterActUseCase.execute(request: dto)
+                sendMessageToAllConnections(
+                    TransferMessage(
+                        state: .server(.gameFlow(.masterSharing)),
+                        data: response.encodeToTransfer()
+                    )
+                )
             case .userActed:
                 break
             case .userVoted:

@@ -16,4 +16,8 @@ public class DefaultGameSession: GameSession {
     public func startGame(at room: Room) {
         self.started = true
     }
+    
+    public func getTimerForMasterData(picture: Data, description: String) -> TimeInterval {
+        return TimeInterval(integerLiteral: 90)
+    }
 }
