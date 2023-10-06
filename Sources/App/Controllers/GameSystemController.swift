@@ -13,17 +13,20 @@ import ClioEntities
 class GameSystemController: RouteCollection {
     private(set) var connections: [SocketConnection] = [SocketConnection]()
     let registerUserInRoomUseCase: RegisterUserInRoomUseCase
-    let gameStartUseCase: GameStartUseCase
-    let masterActUseCase: MasterActUseCase
+    let startGameUseCase: StartGameUseCase
+    let sendMasterArtefactsUseCase: SendMasterArtefactsUseCase
+    let sendUserResponseUseCase: SendUserResponseUseCase
     
     init(
         registerUserInRoomUseCase: RegisterUserInRoomUseCase,
-        gameStartUseCase: GameStartUseCase,
-        masterActUseCase: MasterActUseCase
+        startGameUseCase: StartGameUseCase,
+        sendMasterArtefactsUseCase: SendMasterArtefactsUseCase,
+        sendUserResponseUseCase: SendUserResponseUseCase
     ) {
         self.registerUserInRoomUseCase = registerUserInRoomUseCase
-        self.gameStartUseCase = gameStartUseCase
-        self.masterActUseCase = masterActUseCase
+        self.startGameUseCase = startGameUseCase
+        self.sendMasterArtefactsUseCase = sendMasterArtefactsUseCase
+        self.sendUserResponseUseCase = sendUserResponseUseCase
     }
     
     func boot(routes: RoutesBuilder) throws {
@@ -131,7 +134,7 @@ class GameSystemController: RouteCollection {
                 let dto = BooleanMessageDTO.decodeFromMessage(message.data)
                 if !dto.value { return }
             
-                let response: MasterActingDTO = try await gameStartUseCase.execute(
+                let response: MasterActingDTO = try await startGameUseCase.execute(
                     request: roomId
                 )
                 sendMessageToAllConnections(
@@ -142,7 +145,7 @@ class GameSystemController: RouteCollection {
                 )
             case .masterActed:
                 let dto = MasterActedDTO.decodeFromMessage(message.data)
-                let response: MasterSharingDTO = masterActUseCase.execute(request: dto)
+                let response: MasterSharingDTO = sendMasterArtefactsUseCase.execute(request: dto)
                 sendMessageToAllConnections(
                     TransferMessage(
                         state: .server(.gameFlow(.masterSharing)),
@@ -150,7 +153,14 @@ class GameSystemController: RouteCollection {
                     )
                 )
             case .userActed:
-                break
+                let dto = UserActedDTO.decodeFromMessage(message.data)
+                let response: UserDidActDTO = sendUserResponseUseCase.execute(request: dto)
+                sendMessageToAllConnections(
+                    TransferMessage(
+                        state: .server(.gameFlow(.userDidAct)),
+                        data: response.encodeToTransfer()
+                    )
+                )
             case .userVoted:
                 break
             case .playAgain:

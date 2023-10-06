@@ -8,7 +8,7 @@
 import Foundation
 import ClioEntities
 
-public final class GameStartUseCase: AnyUseCase {
+public final class StartGameUseCase: AnyUseCase {
     let session: GameSession
     let roomRepository: RoomRepository
     

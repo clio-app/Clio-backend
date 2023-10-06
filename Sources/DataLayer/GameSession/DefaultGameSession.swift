@@ -10,7 +10,8 @@ import Domain
 import ClioEntities
 
 public class DefaultGameSession: GameSession {
-    public var started: Bool = false 
+    public private(set) var started: Bool = false
+    public private(set) var descriptions: [Description] = []
     
     public init() {}
 
@@ -20,5 +21,16 @@ public class DefaultGameSession: GameSession {
     
     public func getTimerForMasterData(picture: Data, description: String) -> TimeInterval {
         return TimeInterval(integerLiteral: 90)
+    }
+    
+    public func addDescriptionForPicture(_ description: String, from user: UUID) {
+        descriptions.append(
+            Description(
+                id: UUID(),
+                userID: user,
+                text: description,
+                voteCount: nil
+            )
+        )
     }
 }
