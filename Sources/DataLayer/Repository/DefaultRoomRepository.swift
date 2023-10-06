@@ -43,6 +43,7 @@ public class DefaultRoomRepository: RoomRepository {
                 sessions[sessionIndex].master = RoomUser(
                     rankingPosition: 0,
                     points: 0,
+                    didVote: false,
                     user: request.user
                 )
             } else {
@@ -50,6 +51,7 @@ public class DefaultRoomRepository: RoomRepository {
                     RoomUser(
                         rankingPosition: sessions[sessionIndex].participants.count + 1,
                         points: 0,
+                        didVote: false,
                         user: request.user
                     )
                 )

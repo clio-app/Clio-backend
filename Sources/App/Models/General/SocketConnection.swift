@@ -9,6 +9,7 @@ import Foundation
 import Vapor
 
 struct SocketConnection {
-    let id: UUID
+    let roomId: String
+    let userId: UUID
     let socket: WebSocket
 }

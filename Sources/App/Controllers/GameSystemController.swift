@@ -16,17 +16,23 @@ class GameSystemController: RouteCollection {
     let startGameUseCase: StartGameUseCase
     let sendMasterArtefactsUseCase: SendMasterArtefactsUseCase
     let sendUserResponseUseCase: SendUserResponseUseCase
+    let startVotingUseCase: StartVotingUseCase
+    let computeVotingUseCase: ComputeVotingUseCase
     
     init(
         registerUserInRoomUseCase: RegisterUserInRoomUseCase,
         startGameUseCase: StartGameUseCase,
         sendMasterArtefactsUseCase: SendMasterArtefactsUseCase,
-        sendUserResponseUseCase: SendUserResponseUseCase
+        sendUserResponseUseCase: SendUserResponseUseCase,
+        startVotingUseCase: StartVotingUseCase,
+        computeVotingUseCase: ComputeVotingUseCase
     ) {
         self.registerUserInRoomUseCase = registerUserInRoomUseCase
         self.startGameUseCase = startGameUseCase
         self.sendMasterArtefactsUseCase = sendMasterArtefactsUseCase
         self.sendUserResponseUseCase = sendUserResponseUseCase
+        self.startVotingUseCase = startVotingUseCase
+        self.computeVotingUseCase = computeVotingUseCase
     }
     
     func boot(routes: RoutesBuilder) throws {
@@ -84,11 +90,10 @@ class GameSystemController: RouteCollection {
         }
     }
     
-    func sendMessageToAllConnections(_ message: TransferMessage) {
+    func sendMessageToAllConnections(_ message: TransferMessage, in room: String) {
         let messageData = message.encodeToTransfer()
-        for connection in connections {
-            connection.socket.send(raw: messageData, opcode: .binary)
-        }
+        let connectionsInRoom = connections.filter( { $0.roomId == room })
+        connectionsInRoom.forEach { $0.socket.send(raw: messageData, opcode: .binary) }
     }
     
     func handleSocketClientRequest(
@@ -123,12 +128,19 @@ class GameSystemController: RouteCollection {
                         user: dto.user
                     )
                 )
-                connections.append(SocketConnection(id: dto.user.id, socket: socket))
+                connections.append(
+                    SocketConnection(
+                        roomId: roomId,
+                        userId: dto.user.id,
+                        socket: socket
+                    )
+                )
                 sendMessageToAllConnections(
                     TransferMessage(
                         state: .server(.connection(.playerConnected)),
                         data: response.encodeToTransfer()
-                    )
+                    ),
+                    in: roomId
                 )
             case .gameStarted:
                 let dto = BooleanMessageDTO.decodeFromMessage(message.data)
@@ -141,7 +153,8 @@ class GameSystemController: RouteCollection {
                     TransferMessage(
                         state: .server(.gameFlow(.masterActing)),
                         data: response.encodeToTransfer()
-                    )
+                    ),
+                    in: roomId
                 )
             case .masterActed:
                 let dto = MasterActedDTO.decodeFromMessage(message.data)
@@ -150,7 +163,8 @@ class GameSystemController: RouteCollection {
                     TransferMessage(
                         state: .server(.gameFlow(.masterSharing)),
                         data: response.encodeToTransfer()
-                    )
+                    ),
+                    in: roomId
                 )
             case .userActed:
                 let dto = UserActedDTO.decodeFromMessage(message.data)
@@ -159,10 +173,29 @@ class GameSystemController: RouteCollection {
                     TransferMessage(
                         state: .server(.gameFlow(.userDidAct)),
                         data: response.encodeToTransfer()
-                    )
+                    ),
+                    in: roomId
                 )
+                if let votingDTO = startVotingUseCase.execute(request: response) {
+                    sendMessageToAllConnections(
+                        TransferMessage(
+                            state: .server(.gameFlow(.startVoting)),
+                            data: votingDTO.encodeToTransfer()
+                        ),
+                        in: roomId
+                    )
+                }
             case .userVoted:
-                break
+                let dto = UserVotedDTO.decodeFromMessage(message.data)
+                let response: UserDidVoteDTO = computeVotingUseCase.execute(request: dto)
+                sendMessageToAllConnections(
+                    TransferMessage(
+                        state: .server(.gameFlow(.userDidVote)),
+                        data: response.encodeToTransfer()
+                    ),
+                    in: roomId
+                )
+            // verify round end
             case .playAgain:
                 break
         }

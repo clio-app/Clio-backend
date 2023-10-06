@@ -31,7 +31,9 @@ func routes(_ app: Application) throws {
                 roomRepository: roomRepository
             ),
             sendMasterArtefactsUseCase: SendMasterArtefactsUseCase(session: gameSession),
-            sendUserResponseUseCase: SendUserResponseUseCase(session: gameSession)
+            sendUserResponseUseCase: SendUserResponseUseCase(session: gameSession),
+            startVotingUseCase: StartVotingUseCase(session: gameSession),
+            computeVotingUseCase: ComputeVotingUseCase(session: gameSession)
         )
     )
 }

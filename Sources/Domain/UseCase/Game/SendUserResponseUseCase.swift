@@ -17,6 +17,9 @@ public final class SendUserResponseUseCase: AnyUseCase {
     
     public func execute(request: UserActedDTO) -> UserDidActDTO {
         session.addDescriptionForPicture(request.description, from: request.userId)
-        return UserDidActDTO(submitCount: session.descriptions.count)
+        return UserDidActDTO(
+            submitCount: session.descriptions.count,
+            totalCount: session.players.count
+        )
     }
 }
