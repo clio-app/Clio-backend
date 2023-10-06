@@ -33,7 +33,8 @@ func routes(_ app: Application) throws {
             sendMasterArtefactsUseCase: SendMasterArtefactsUseCase(session: gameSession),
             sendUserResponseUseCase: SendUserResponseUseCase(session: gameSession),
             startVotingUseCase: StartVotingUseCase(session: gameSession),
-            computeVotingUseCase: ComputeVotingUseCase(session: gameSession)
+            computeVotingUseCase: ComputeVotingUseCase(session: gameSession),
+            endRoundUseCase: EndRoundUseCase(session: gameSession)
         )
     )
 }

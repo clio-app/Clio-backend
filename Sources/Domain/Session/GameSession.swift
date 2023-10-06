@@ -20,4 +20,6 @@ public protocol GameSession {
     func addDescriptionForPicture(_ description: String, from user: UUID)
     func getTimerForVoting() -> TimeInterval
     func computeUserVote(user: UUID, votedDescription: UUID)
+    func verifyWinnerDescription() -> Description? 
+    func generateRanking()
 }
