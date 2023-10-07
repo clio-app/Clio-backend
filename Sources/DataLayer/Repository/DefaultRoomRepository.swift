@@ -14,7 +14,7 @@ public class DefaultRoomRepository: RoomRepository {
     
     public init() {}
     
-    public func createRoom(_ room: CreateRoomRequest) async throws -> RoomCode {
+    public func createRoom(_ room: CreateRoomRequest) -> RoomCode {
         var sessionCode = generateCode()
         
         while sessions.contains(where: { $0.id == sessionCode }) {
@@ -36,13 +36,14 @@ public class DefaultRoomRepository: RoomRepository {
     
     public func registerUserInRoom(
         _ request: RegisterUserRequest
-    ) async throws -> UpdatePlayersRoomDTO {
+    ) throws -> UpdatePlayersRoomDTO {
         if let sessionIndex = sessions.firstIndex(where: { $0.id == request.roomCode }) {
             if sessions[sessionIndex].createdBy == nil {
                 sessions[sessionIndex].createdBy = request.user
                 sessions[sessionIndex].master = RoomUser(
                     rankingPosition: 0,
                     points: 0,
+                    didVote: false,
                     user: request.user
                 )
             } else {
@@ -50,6 +51,7 @@ public class DefaultRoomRepository: RoomRepository {
                     RoomUser(
                         rankingPosition: sessions[sessionIndex].participants.count + 1,
                         points: 0,
+                        didVote: false,
                         user: request.user
                     )
                 )
@@ -64,11 +66,11 @@ public class DefaultRoomRepository: RoomRepository {
         }
     }
 
-    public func getAllRooms() async throws -> [Room] {
+    public func getAllRooms() -> [Room] {
         return sessions
     }
     
-    public func findRoomById(_ id: String) async throws -> Room {
+    public func findRoomById(_ id: String) throws -> Room {
         if let room = sessions.first(where: { $0.id == id } ) { return room }
         throw RoomRepositoryError.cantFindRoom
     }

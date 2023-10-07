@@ -8,7 +8,7 @@
 import Foundation
 import ClioEntities
 
-public final class MasterActUseCase: AnyUseCase {
+public final class SendMasterArtefactsUseCase: AnyUseCase {
     let session: GameSession
     
     public init(session: GameSession) {

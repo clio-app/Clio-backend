@@ -9,8 +9,8 @@ import Foundation
 import ClioEntities
 
 public protocol RoomRepository {
-    func createRoom(_ room: CreateRoomRequest) async throws -> RoomCode
-    func registerUserInRoom(_ request: RegisterUserRequest) async throws -> UpdatePlayersRoomDTO
-    func getAllRooms() async throws -> [Room]
-    func findRoomById(_ id: String) async throws -> Room
+    func createRoom(_ room: CreateRoomRequest) -> RoomCode
+    func registerUserInRoom(_ request: RegisterUserRequest) throws -> UpdatePlayersRoomDTO
+    func getAllRooms() -> [Room]
+    func findRoomById(_ id: String) throws -> Room
 }

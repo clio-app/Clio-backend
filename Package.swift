@@ -17,14 +17,25 @@ let package = Package(
         .package(url: "https://github.com/clio-app/clio-entities", branch: "main"),
     ],
     targets: [
+        // MARK: - Domain
         .target(name: "Domain", dependencies: [
             .product(name: "ClioEntities", package: "clio-entities")
         ]),
+        
+        // MARK: - Data
         .target(name: "DataLayer", dependencies: [
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             .product(name: "ClioEntities", package: "clio-entities"),
             "Domain"
         ]),
+        .testTarget(
+            name: "DataTests",
+            dependencies: [
+                "DataLayer",
+                .product(name: "ClioEntities", package: "clio-entities")
+            ]),
+        
+        // MARK: - App
         .executableTarget(
             name: "App",
             dependencies: [
