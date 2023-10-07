@@ -17,7 +17,6 @@ let package = Package(
         .package(url: "https://github.com/clio-app/clio-entities", branch: "main"),
     ],
     targets: [
-        
         // MARK: - Domain
         .target(name: "Domain", dependencies: [
             .product(name: "ClioEntities", package: "clio-entities")
@@ -29,6 +28,12 @@ let package = Package(
             .product(name: "ClioEntities", package: "clio-entities"),
             "Domain"
         ]),
+        .testTarget(
+            name: "DataTests",
+            dependencies: [
+                "DataLayer",
+                .product(name: "ClioEntities", package: "clio-entities")
+            ]),
         
         // MARK: - App
         .executableTarget(
