@@ -14,6 +14,8 @@ final class RoomUser: Fields {
     var rankingPosition: Int
     @Field(key: "points")
     var points: Int
+    @Field(key: "didVote")
+    var didVote: Bool
     @Field(key: "user")
     var user: User
 
@@ -22,6 +24,7 @@ final class RoomUser: Fields {
         
         self.rankingPosition = entity.rankingPosition
         self.points = entity.points
+        self.didVote = entity.didVote
         self.user = User(from: entity.user)
     }
 }
