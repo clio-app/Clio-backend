@@ -12,6 +12,9 @@ import ClioEntities
 
 class GameSystemController: RouteCollection {
     private(set) var connections: [SocketConnection] = [SocketConnection]()
+    var sessionImages: [SessionArtefact] = [SessionArtefact]()
+    
+    // MARK: UseCases
     let registerUserInRoomUseCase: RegisterUserInRoomUseCase
     let startGameUseCase: StartGameUseCase
     let sendMasterArtefactsUseCase: SendMasterArtefactsUseCase
@@ -19,6 +22,7 @@ class GameSystemController: RouteCollection {
     let startVotingUseCase: StartVotingUseCase
     let computeVotingUseCase: ComputeVotingUseCase
     let endRoundUseCase: EndRoundUseCase
+    let chooseNewMasterUseCase: ChooseMasterUseCase
     
     init(
         registerUserInRoomUseCase: RegisterUserInRoomUseCase,
@@ -27,7 +31,8 @@ class GameSystemController: RouteCollection {
         sendUserResponseUseCase: SendUserResponseUseCase,
         startVotingUseCase: StartVotingUseCase,
         computeVotingUseCase: ComputeVotingUseCase,
-        endRoundUseCase: EndRoundUseCase
+        endRoundUseCase: EndRoundUseCase,
+        chooseNewMasterUseCase: ChooseMasterUseCase
     ) {
         self.registerUserInRoomUseCase = registerUserInRoomUseCase
         self.startGameUseCase = startGameUseCase
@@ -36,11 +41,53 @@ class GameSystemController: RouteCollection {
         self.startVotingUseCase = startVotingUseCase
         self.computeVotingUseCase = computeVotingUseCase
         self.endRoundUseCase = endRoundUseCase
+        self.chooseNewMasterUseCase = chooseNewMasterUseCase
     }
     
     func boot(routes: RoutesBuilder) throws {
-        let group = routes.grouped("game")
-        group.webSocket(":roomID", onUpgrade: onSocketUpgrade)
+        routes.group("game") { game in
+            game.group(":roomID") { gameID in
+                gameID.webSocket(onUpgrade: onSocketUpgrade)
+                gameID.on(.POST, "artefacts", body: .collect(maxSize: "10mb"), use: uploadPicture)
+                gameID.get("artefacts", use: getSessionPicture)
+            }
+        }
+    }
+}
+
+// MARK: - API Callbacks
+extension GameSystemController {
+    func getSessionPicture(_ request: Request) async throws -> SessionArtefact {
+        let imageId: UUID = try request.content.decode(UUID.self)
+        guard let findedPicture = sessionImages.first(where: { $0.id == imageId }) else {
+            throw Abort(.noContent)
+        }
+        return findedPicture
+    }
+    
+    func uploadPicture(_ request: Request) async throws -> UploadPictureResponse {
+        switch request.headers.contentType {
+            case .formData?:
+//                let decoder = FormDataDecoder()
+                let requestData = try request.content.decode(SessionArtefact.self)
+//                let requestData = try decoder.decode(
+//                    SessionArtefact.self,
+//                    from: request.body.data!,
+//                    headers: request.headers
+//                )
+//                let multiPart = MultipartPart(body: requestData.picture)
+//                guard let file = File(multipart: multiPart) else {
+//                    throw Abort(.unsupportedMediaType)
+//                }
+            guard let contentType = requestData.picture?.contentType,
+                        [.png, .jpeg, .mpeg].contains(contentType) else {
+                            throw Abort(.unsupportedMediaType)
+                        }
+                sessionImages.append(requestData)
+                return UploadPictureResponse(id: requestData.id!.uuidString)
+            default:
+                throw Abort(.badRequest)
+        }
     }
     
     func onSocketUpgrade(_ request: Request, _ socket: WebSocket) {
@@ -155,6 +202,17 @@ class GameSystemController: RouteCollection {
             sendMessageToAllConnections(
                 TransferMessage(
                     state: .server(.gameFlow(.masterActing)),
+                    data: response.encodeToTransfer()
+                ),
+                in: roomId
+            )
+        case .masterChoosed:
+            let dto: ChooseMasterDTO = ChooseMasterDTO.decodeFromMessage(message.data)
+            let response: MasterChoosedDTO = chooseNewMasterUseCase.execute(request: dto)
+            
+            sendMessageToAllConnections(
+                TransferMessage(
+                    state: .server(.gameFlow(.chooseMaster)),
                     data: response.encodeToTransfer()
                 ),
                 in: roomId

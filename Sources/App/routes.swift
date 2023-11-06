@@ -26,15 +26,13 @@ func routes(_ app: Application) throws {
     try app.register(
         collection: GameSystemController(
             registerUserInRoomUseCase: RegisterUserInRoomUseCase(repository: roomRepository),
-            startGameUseCase: StartGameUseCase(
-                session: gameSession,
-                roomRepository: roomRepository
-            ),
+            startGameUseCase: StartGameUseCase(session: gameSession, roomRepository: roomRepository),
             sendMasterArtefactsUseCase: SendMasterArtefactsUseCase(session: gameSession),
             sendUserResponseUseCase: SendUserResponseUseCase(session: gameSession),
             startVotingUseCase: StartVotingUseCase(session: gameSession),
             computeVotingUseCase: ComputeVotingUseCase(session: gameSession),
-            endRoundUseCase: EndRoundUseCase(session: gameSession)
+            endRoundUseCase: EndRoundUseCase(session: gameSession),
+            chooseNewMasterUseCase: ChooseMasterUseCase(session: gameSession)
         )
     )
 }

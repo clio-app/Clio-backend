@@ -22,4 +22,5 @@ public protocol GameSession {
     func computeUserVote(user: UUID, votedDescription: UUID)
     func verifyWinnerDescription() -> Description? 
     func generateRanking()
+    func changeSessionMaster()
 }

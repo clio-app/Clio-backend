@@ -11,10 +11,12 @@ import ClioEntities
 
 public class DefaultGameSession: GameSession {
     public var sessionArtefacts: SessionArtefacts? = nil
+    
     public private(set) var started: Bool = false
     public private(set) var master: RoomUser? = nil
     public private(set) var players: [RoomUser] = []
     public private(set) var descriptions: [Description] = []
+    private var wasMaster: [RoomUser] = []
     
     public init() {}
 
@@ -59,6 +61,14 @@ public class DefaultGameSession: GameSession {
         
         players[playerIndex].didVote = true
         descriptions[descriptionIndex].voteCount += 1
+    }
+    
+    public func changeSessionMaster() {
+        let notMasterPlayers = players.filter { !wasMaster.contains($0) }
+        guard let master = notMasterPlayers.first else { return }
+        
+        wasMaster.append(master)
+        self.master = master
     }
     
     public func verifyWinnerDescription() -> Description? {
