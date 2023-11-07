@@ -20,7 +20,7 @@ public final class StartVotingUseCase: AnyUseCase {
         guard let sessionArtefacts = session.sessionArtefacts else { return nil }
         
         return StartVotingDTO(
-            picture: sessionArtefacts.picture ?? Data(),
+            pictureID: sessionArtefacts.pictureId,
             descriptions: session.descriptions,
             countdownTimer: session.getTimerForVoting()
         )

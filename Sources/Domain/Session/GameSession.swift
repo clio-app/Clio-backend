@@ -16,7 +16,7 @@ public protocol GameSession {
     var descriptions: [Description] { get }
 
     func startGame(at room: Room)
-    func getTimerForMasterData(picture: Data, description: String) -> TimeInterval
+    func getTimerForMasterData(pictureID: UUID, description: String) -> TimeInterval
     func addDescriptionForPicture(_ description: String, from user: UUID)
     func getTimerForVoting() -> TimeInterval
     func computeUserVote(user: UUID, votedDescription: UUID)

@@ -12,7 +12,7 @@ import ClioEntities
 
 class GameSystemController: RouteCollection {
     private(set) var connections: [SocketConnection] = [SocketConnection]()
-    var sessionImages: [SessionArtefact] = [SessionArtefact]()
+    var sessionImages: [String : [SessionArtefact]] = [:]
     
     // MARK: UseCases
     let registerUserInRoomUseCase: RegisterUserInRoomUseCase
@@ -59,6 +59,9 @@ class GameSystemController: RouteCollection {
     }
     
     func getSessionPicture(_ request: Request) async throws -> SessionArtefact {
+        guard let sessionId = request.parameters.get("roomID") else {
+            throw Abort(.badRequest)
+        }
         guard let uuidString = request.parameters.get("artefactID") else { throw Abort(.badRequest)}
         guard let imageId: UUID = UUID(uuidString: uuidString) else {
             throw Abort(
@@ -68,9 +71,13 @@ class GameSystemController: RouteCollection {
                 )
             )
         }
-        guard let findedPicture = sessionImages.first(where: { $0.id == imageId }) else {
+        
+        guard let findedPicture = sessionImages[sessionId]?.first(
+            where: { $0.id == imageId }
+        ) else {
             throw Abort(.noContent)
         }
+
         return findedPicture
     }
     
@@ -86,7 +93,25 @@ class GameSystemController: RouteCollection {
                 throw Abort(.unsupportedMediaType)
             }
             
-            sessionImages.append(input)
+            let response = sendMasterArtefactsUseCase.execute(
+                request: MasterActedDTO(
+                    pictureID: input.id!,
+                    description: input.description
+                )
+            )
+            guard let roomID = request.parameters.get("roomID") else {
+                throw Abort(.badRequest)
+            }
+            
+            sendMessageToAllConnections(
+                TransferMessage(
+                    state: .server(.gameFlow(.masterSharing)),
+                    data: response.encodeToTransfer()
+                ),
+                in: roomID
+            )
+            
+            sessionImages[roomID]?.append(input)
             return UploadPictureResponse(id: input.id!.uuidString)
         default:
             throw Abort(.unsupportedMediaType)
@@ -221,15 +246,16 @@ class GameSystemController: RouteCollection {
                 in: roomId
             )
         case .masterActed:
-            let dto = MasterActedDTO.decodeFromMessage(message.data)
-            let response: MasterSharingDTO = sendMasterArtefactsUseCase.execute(request: dto)
-            sendMessageToAllConnections(
-                TransferMessage(
-                    state: .server(.gameFlow(.masterSharing)),
-                    data: response.encodeToTransfer()
-                ),
-                in: roomId
-            )
+            break
+//            let dto = MasterActedDTO.decodeFromMessage(message.data)
+//            let response: MasterSharingDTO = sendMasterArtefactsUseCase.execute(request: dto)
+//            sendMessageToAllConnections(
+//                TransferMessage(
+//                    state: .server(.gameFlow(.masterSharing)),
+//                    data: response.encodeToTransfer()
+//                ),
+//                in: roomId
+//            )
         case .userActed:
             let dto = UserActedDTO.decodeFromMessage(message.data)
             let response: UserDidActDTO = sendUserResponseUseCase.execute(request: dto)

@@ -26,11 +26,11 @@ public class DefaultGameSession: GameSession {
         self.started = true
     }
     
-    public func getTimerForMasterData(picture: Data, description: String) -> TimeInterval {
+    public func getTimerForMasterData(pictureID: UUID, description: String) -> TimeInterval {
         sessionArtefacts = SessionArtefacts(
-            picture: picture,
-            description: description,
-            masterId: master?.user.id ?? UUID()
+            masterId: master?.user.id ?? UUID(),
+            pictureId: pictureID,
+            description: description
         )
         
         return TimeInterval(integerLiteral: 90)
