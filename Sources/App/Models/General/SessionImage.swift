@@ -12,7 +12,8 @@ import Vapor
 final class SessionArtefact: Content {
     var id: UUID? = UUID()
     var description: String
-    var picture: File?
+    var picture: File
+}
     
 //    init() { }
     
@@ -34,7 +35,7 @@ final class SessionArtefact: Content {
 //            )
 //        }
 //    }
-}
+//}
 
 //extension SessionArtefact: Content {}
 

@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Thiago Henrique on 27/09/23.
 //
@@ -48,17 +48,26 @@ class GameSystemController: RouteCollection {
         routes.group("game") { game in
             game.group(":roomID") { gameID in
                 gameID.webSocket(onUpgrade: onSocketUpgrade)
-                gameID.on(.POST, "artefacts", body: .collect(maxSize: "10mb"), use: uploadPicture)
-                gameID.get("artefacts", use: getSessionPicture)
+                gameID.group("artefacts") { artefact in
+                    artefact.on(.POST, body: .collect(maxSize: "10mb"), use: uploadPicture)
+                    artefact.group(":artefactID") { artefactId in
+                        artefactId.get(use: getSessionPicture)
+                    }
+                }
             }
         }
     }
-}
-
-// MARK: - API Callbacks
-extension GameSystemController {
+    
     func getSessionPicture(_ request: Request) async throws -> SessionArtefact {
-        let imageId: UUID = try request.content.decode(UUID.self)
+        guard let uuidString = request.parameters.get("artefactID") else { throw Abort(.badRequest)}
+        guard let imageId: UUID = UUID(uuidString: uuidString) else {
+            throw Abort(
+                .custom(
+                    code: 400,
+                    reasonPhrase: "UUID Invalido"
+                )
+            )
+        }
         guard let findedPicture = sessionImages.first(where: { $0.id == imageId }) else {
             throw Abort(.noContent)
         }
@@ -67,26 +76,20 @@ extension GameSystemController {
     
     func uploadPicture(_ request: Request) async throws -> UploadPictureResponse {
         switch request.headers.contentType {
-            case .formData?:
-//                let decoder = FormDataDecoder()
-                let requestData = try request.content.decode(SessionArtefact.self)
-//                let requestData = try decoder.decode(
-//                    SessionArtefact.self,
-//                    from: request.body.data!,
-//                    headers: request.headers
-//                )
-//                let multiPart = MultipartPart(body: requestData.picture)
-//                guard let file = File(multipart: multiPart) else {
-//                    throw Abort(.unsupportedMediaType)
-//                }
-            guard let contentType = requestData.picture?.contentType,
-                        [.png, .jpeg, .mpeg].contains(contentType) else {
-                            throw Abort(.unsupportedMediaType)
-                        }
-                sessionImages.append(requestData)
-                return UploadPictureResponse(id: requestData.id!.uuidString)
-            default:
-                throw Abort(.badRequest)
+        case .formData?:
+            let input = try request.content.decode(SessionArtefact.self)
+            input.id = UUID()
+            let picture = input.picture
+            guard picture.data.readableBytes > 0 else { throw Abort(.badRequest) }
+            guard let contentType = picture.contentType,
+                  [.png, .jpeg, .mpeg].contains(contentType) else {
+                throw Abort(.unsupportedMediaType)
+            }
+            
+            sessionImages.append(input)
+            return UploadPictureResponse(id: input.id!.uuidString)
+        default:
+            throw Abort(.unsupportedMediaType)
         }
     }
     
@@ -95,36 +98,36 @@ extension GameSystemController {
         
         socket.onBinary { [weak self] socket, value in
             guard let strongSelf = self else { return }
-        
+            
             if let request = try? JSONDecoder().decode(
                 TransferMessage.self,
                 from: value
             ) {
                 switch request.state {
-                    case .client(let clientMessages):
-                        do {
-                            try await strongSelf.handleSocketClientRequest(
-                                 roomId,
-                                 socket,
-                                 message: request,
-                                 state: clientMessages
-                             )
-                        } catch {
-                            let message = TransferMessage(
-                                state: .server(.error),
-                                data: SocketError.cantHandleClientMessage(
-                                    error.localizedDescription
-                                )
-                                .errorDescription?.data(using: .utf8) ?? Data()
+                case .client(let clientMessages):
+                    do {
+                        try await strongSelf.handleSocketClientRequest(
+                            roomId,
+                            socket,
+                            message: request,
+                            state: clientMessages
+                        )
+                    } catch {
+                        let message = TransferMessage(
+                            state: .server(.error),
+                            data: SocketError.cantHandleClientMessage(
+                                error.localizedDescription
                             )
-                            
-                            try? await socket.send(
-                                raw: message.encodeToTransfer(),
-                                opcode: .binary
-                            )
-                        }
-                    case .server(_):
-                        break
+                            .errorDescription?.data(using: .utf8) ?? Data()
+                        )
+                        
+                        try? await socket.send(
+                            raw: message.encodeToTransfer(),
+                            opcode: .binary
+                        )
+                    }
+                case .server(_):
+                    break
                 }
             } else {
                 let message = TransferMessage(
@@ -153,13 +156,13 @@ extension GameSystemController {
         state: MessageState.ClientMessages
     ) async throws {
         switch state {
-            case .gameFlow(let gameFlowMessage):
-                try await handleSocketGameflowRequest(
-                    roomId,
-                    socket,
-                    message: message,
-                    state: gameFlowMessage
-                )
+        case .gameFlow(let gameFlowMessage):
+            try await handleSocketGameflowRequest(
+                roomId,
+                socket,
+                message: message,
+                state: gameFlowMessage
+            )
         }
     }
     
@@ -265,8 +268,8 @@ extension GameSystemController {
                     in: roomId
                 )
             }
-            case .playAgain:
-                break
+        case .playAgain:
+            break
         }
     }
 }
