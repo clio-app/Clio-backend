@@ -18,10 +18,10 @@ public final class SendMasterArtefactsUseCase: AnyUseCase {
     public func execute(request: MasterActedDTO) -> MasterSharingDTO {
         return MasterSharingDTO(
             countdownTimer: session.getTimerForMasterData(
-                picture: request.picture,
+                pictureID: request.pictureID,
                 description: request.description
             ),
-            picture: request.picture
+            pictureID: request.pictureID
         )
     }
 }
